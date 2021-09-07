@@ -1,3 +1,3 @@
 export default {
-    name: "Twitch Bot",
+    name: "Hermod - Axel669's Twitch Bot",
 }
