@@ -40,7 +40,6 @@
 
 <form action="https://id.twitch.tv/oauth2/authorize" bind:this={form}>
     <input type="hidden" name="client_id" value="mrz3t77h5octc2glld7a2qaw8vuo7q" />
-    <!-- <input type="hidden" name="redirect_uri" value="http://localhost:1338" /> -->
     <input type="hidden" name="redirect_uri" value={location.origin} />
     <input type="hidden" name="response_type" value="token id_token" />
     <input type="hidden" name="scope" value={scope} />
