@@ -2,7 +2,7 @@
     import {createEventDispatcher} from "svelte"
 
     import Button from "svelte-doric/core/button"
-    import Card from "svelte-doric/core/Card"
+    import Card from "svelte-doric/core/card"
     import Popover from "svelte-doric/core/popover"
     import TextInput from "svelte-doric/core/text-input"
 
