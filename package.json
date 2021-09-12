@@ -10,6 +10,14 @@
   "author": "Axel",
   "license": "MIT",
   "devDependencies": {
+  },
+  "dependencies": {
+    "@axel669/array-sort": "^0.1.0",
+    "@axel669/immutable-update": "^1.0.2",
+    "@rollup/plugin-replace": "^2.4.2",
+    "jwt-decode": "^3.1.2",
+    "tmi.js": "^1.8.3",
+    "url-pattern": "^1.0.3",
     "@axel669/norn": "^4.0.0",
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-html": "^0.2.0",
@@ -22,13 +30,5 @@
     "static-server": "^2.2.1",
     "svelte": "^3.38.2",
     "svelte-doric": "^1.4.0"
-  },
-  "dependencies": {
-    "@axel669/array-sort": "^0.1.0",
-    "@axel669/immutable-update": "^1.0.2",
-    "@rollup/plugin-replace": "^2.4.2",
-    "jwt-decode": "^3.1.2",
-    "tmi.js": "^1.8.3",
-    "url-pattern": "^1.0.3"
   }
 }
