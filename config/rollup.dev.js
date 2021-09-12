@@ -3,7 +3,7 @@ import commonjs from "@rollup/plugin-commonjs"
 import resolve from "@rollup/plugin-node-resolve"
 import del from "rollup-plugin-delete"
 import html from "@rollup/plugin-html"
-import replace from "@rollup/plugin-replace"
+// import replace from "@rollup/plugin-replace"
 
 import copy from "./plugins/copy.js"
 import simpleLocation from "./plugins/simple-location"
