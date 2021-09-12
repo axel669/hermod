@@ -23,12 +23,6 @@ export default {
         simpleLocation,
         resolve(),
         commonjs(),
-        replace({
-            preventAssignment: true,
-            values: {
-                "TWITCH_TOKEN": JSON.stringify(process.env.twitch_bot_token),
-            }
-        }),
         html({
             filename: "./build/index.html",
             title: appInfo.name,
