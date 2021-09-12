@@ -71,9 +71,24 @@
 
 <screen-wrapper>
     <FlexLayout direction="column">
-        <Text color="secondary">
-            Placeholder explanatory text here
-        </Text>
+        <div>
+            <Text color="primary" block>
+                What is the master password?
+            </Text>
+            <Text variant="secondary">
+                The master password is a password that is used to securely store
+                the settings for the bot (since there is a password in it).
+            </Text>
+
+            <Text color="primary" block>
+                What if I haven't registered already?
+            </Text>
+            <Text variant="secondary">
+                If you have not used the bot before, then entering a new
+                master password will automatically setup your account using
+                that password, and you will be able to use it to login anytime.
+            </Text>
+        </div>
         <TextInput
             type="password"
             bind:value={password}
