@@ -9,14 +9,15 @@
     ].join(" ")
     let form = null
 
-    $: autoRelog = (
-        form !== null
-        && user === null
-        && sessionStorage.relog === "true"
-    )
-    $: if (autoRelog) {
-        form.submit()
-    }
+    const autoRelog = false
+    // $: autoRelog = (
+    //     form !== null
+    //     && user === null
+    //     && sessionStorage.relog === "true"
+    // )
+    // $: if (autoRelog) {
+    //     form.submit()
+    // }
 </script>
 
 <style>

@@ -34,12 +34,10 @@ export default {
                     return
                 }
 
-                if (user.badges?.hasOwnProperty("broadcaster") === true) {
-                    user.broadcaster = true
-                }
-                if (user.badges?.hasOwnProperty("vip") === true) {
-                    user.vip = true
-                }
+                // user.broadcaster = user.badges?.hasOwnProperty("broadcaster") === true
+                user.broadcaster = user.badges?.broadcaster !== undefined
+                // user.vip = user.badges?.hasOwnProperty("vip") === true
+                user.vip = user.badges?.vip !== undefined
 
                 user.level = parseInt(
                     [user.broadcaster, user.mod, user.vip]

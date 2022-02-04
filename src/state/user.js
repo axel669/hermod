@@ -1,5 +1,10 @@
 import jwtDecode from "jwt-decode"
 
+const win = (name) =>
+    (obj) => {
+        window[name] = obj
+        return obj
+    }
 const userInfo = () => {
     const url = new URL(document.location.href.toString().replace("#", "?"))
 
@@ -15,16 +20,16 @@ const userInfo = () => {
     const accessToken = url.searchParams.get("access_token")
     const info = jwtDecode(idToken)
 
-    sessionStorage.relog = "true"
+    // sessionStorage.relog = "true"
     history.replaceState(null, document.title, location.origin)
 
-    return {
+    return win("userInfo")({
         info,
         token: {
             id: idToken,
             access: accessToken,
         }
-    }
+    })
 }
 
 export default userInfo()

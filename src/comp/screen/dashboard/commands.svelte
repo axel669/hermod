@@ -1,4 +1,5 @@
 <script>
+    import ActionArea from "svelte-doric/core/action-area"
     import Button from "svelte-doric/core/button"
     import Card from "svelte-doric/core/card"
     import Dialog from "svelte-doric/core/dialog"
@@ -8,6 +9,7 @@
     import Text from "svelte-doric/core/text"
 
     import Flex from "svelte-doric/core/layout/flex"
+    import Grid from "svelte-doric/core/layout/grid"
 
     import NewCommand from "./commands/new-command.svelte"
     import SettingsEditor from "./commands/settings-editor.svelte"
@@ -94,8 +96,9 @@
 <style>
     command-info {
         display: grid;
-        grid-template-columns: 48px auto 48px;
+        /* grid-template-columns: 48px auto 48px; */
         padding: 4px;
+        height: 24px;
     }
 
     command-name {
@@ -113,31 +116,67 @@
     <Button on:tap={addCommand} color="primary" variant="outline">
         <Icon name="add" />New Command
     </Button>
-    {#each commands as command (command)}
-        <Card color={command.enabled ? "secondary" : "danger"}>
-            <svelte:fragment slot="title">
-                <command-name>
-                    <Icon name={command.type} /> {command.name}
-                </command-name>
-            </svelte:fragment>
-            <command-info>
-                <Button on:tap={() => edit(command)} color="primary">
-                    <Icon name="edit" />
-                </Button>
+    <Grid cols={2} padding="0px" gap="4px">
+        {#each commands as command (command)}
+            <Button
+            color={command.enabled ? "secondary" : "danger"}
+            variant="outline"
+            on:tap={() => edit(command)}
+            >
+                {command.name}
+            </Button>
+            <!-- <Card color={command.enabled ? "secondary" : "danger"}>
+                <svelte:fragment slot="title">
+                    <command-name>
+                        <Icon name={command.type} /> {command.name}
+                    </command-name>
+                </svelte:fragment>
+                <ActionArea on:tap={() => edit(command)}>
+                    <command-info>
+                        <Button on:tap={() => edit(command)} color="primary">
+                            <Icon name="edit" />
+                        </Button>
 
-                <div>
-                    <Text block variant="secondary">
-                        Enabled: {command.enabled}
-                    </Text>
-                    <Text block variant="secondary">
-                        Plugin: {command.plugin}
-                    </Text>
-                </div>
+                        <div>
+                            <Text block variant="secondary">
+                                Enabled: {command.enabled}
+                            </Text>
+                            <Text block variant="secondary">
+                                Plugin: {command.plugin}
+                            </Text>
+                        </div>
 
-                <Button on:tap={() => remove(command)} color="danger">
-                    <Icon name="delete" />
-                </Button>
-            </command-info>
-        </Card>
-    {/each}
+                        <Button on:tap={() => remove(command)} color="danger">
+                            <Icon name="delete" />
+                        </Button>
+                    </command-info>
+                </ActionArea>
+            </Card> -->
+            <!-- <Card color={command.enabled ? "secondary" : "danger"}>
+                <svelte:fragment slot="title">
+                    <command-name>
+                        <Icon name={command.type} /> {command.name}
+                    </command-name>
+                </svelte:fragment>
+                <command-info>
+                    <Button on:tap={() => edit(command)} color="primary">
+                        <Icon name="edit" />
+                    </Button>
+
+                    <div>
+                        <Text block variant="secondary">
+                            Enabled: {command.enabled}
+                        </Text>
+                        <Text block variant="secondary">
+                            Plugin: {command.plugin}
+                        </Text>
+                    </div>
+
+                    <Button on:tap={() => remove(command)} color="danger">
+                        <Icon name="delete" />
+                    </Button>
+                </command-info>
+            </Card> -->
+        {/each}
+    </Grid>
 </Flex>
