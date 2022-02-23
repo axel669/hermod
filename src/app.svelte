@@ -1,24 +1,47 @@
 <script>
-    import AppStyle from "svelte-doric/core/app-style"
-    import baseline from "svelte-doric/core/baseline"
-    import theme from "svelte-doric/core/theme/tron"
+    import {
+        AppStyle,
+        Baseline as baseline,
 
-    import Login from "@/comp/screen/login.svelte"
-    import DashboardInit from "@/comp/screen/dashboard/init.svelte"
-    import Dashboard from "@/comp/screen/dashboard.svelte"
+        HexagonSpinner as Spinner,
+    } from "svelte-doric"
+    import { LightTheme, DarkTheme, TronTheme } from "svelte-doric/theme"
+
+    import Login from "@/comp/login.svelte"
+    import Dashboard from "@/comp/dashboard.svelte"
 
     import user from "@/state/user"
     import settings from "@/state/settings"
+    import currentTheme from "@/state/theme"
+
+    const themeMap = {
+        light: LightTheme,
+        dark: DarkTheme,
+        tron: TronTheme,
+    }
+
+    $: theme = themeMap[$currentTheme]
 </script>
+
+<style>
+    load-area {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 100vw;
+        height: 100vh;
+    }
+</style>
 
 <AppStyle {baseline} {theme} />
 
-{#if user === null}
+{#if $user === null || $settings === null}
+    <load-area>
+        <Spinner size={120} />
+    </load-area>
+{:else if $user === false}
     <Login />
 {:else}
-    {#if $settings === null}
-        <DashboardInit />
-    {:else}
-        <Dashboard />
-    {/if}
+    <Dashboard />
 {/if}

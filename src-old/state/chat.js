@@ -34,9 +34,7 @@ export default {
                     return
                 }
 
-                // user.broadcaster = user.badges?.hasOwnProperty("broadcaster") === true
                 user.broadcaster = user.badges?.broadcaster !== undefined
-                // user.vip = user.badges?.hasOwnProperty("vip") === true
                 user.vip = user.badges?.vip !== undefined
 
                 user.level = parseInt(

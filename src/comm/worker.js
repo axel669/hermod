@@ -1,17 +1,22 @@
-import {parseURL, genScriptURL} from "@/plugin/info"
+import {parseURL, genScriptURL} from "./plugin"
 
 const worker = new Worker("./command-worker.js")
 
 const workerCall = (message) => new Promise(
     (resolve, reject) => {
         const channel = new MessageChannel()
-        channel.port1.onmessage = (evt) => resolve(evt.data)
+        channel.port1.onmessage = (evt) => {
+            if (evt.data.error !== undefined) {
+                resolve(new Error(evt.data.error))
+            }
+            resolve(evt.data.result)
+        }
         worker.postMessage(message, [channel.port2])
     }
 )
 
 export default {
-    loadScript: (url) => {
+    importPlugin: (url) => {
         const info = parseURL(url)
 
         if (info === null) {
@@ -25,11 +30,11 @@ export default {
             args: {scriptURL, ...info }
         })
     },
-    execScript: (args) => workerCall({
+    sendCommand: (args) => workerCall({
         type: "exec",
         args,
     }),
-    unloadScript: (plugin) => workerCall({
+    removePlugin: (plugin) => workerCall({
         type: "unload",
         args: {
             name: plugin.name,
