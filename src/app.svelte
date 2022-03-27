@@ -11,7 +11,7 @@
     import Dashboard from "@/comp/dashboard.svelte"
 
     import user from "@/state/user"
-    import settings from "@/state/settings"
+    import { loaded } from "@/state/settings"
     import currentTheme from "@/state/theme"
 
     const themeMap = {
@@ -36,7 +36,7 @@
 
 <AppStyle {baseline} {theme} />
 
-{#if $user === null || $settings === null}
+{#if $user === null || $loaded === false}
     <load-area>
         <Spinner size={120} />
     </load-area>

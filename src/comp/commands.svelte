@@ -8,14 +8,16 @@
         TitleBar,
     } from "svelte-doric"
     import { Dialog } from "svelte-doric/dialog"
+    import { Flex } from "svelte-doric/layout"
 
-    import pubsub from "pubsub-js"
+    import bridge from "@/comm/bridge"
 
+    import Command from "./commands/command.svelte"
     import NewTextCommand from "./commands/new-text-command.svelte"
 
     import twitchAPI from "@/comm/twitch"
     import user from "@/state/user"
-    import settings from "@/state/settings"
+    import {commandList} from "@/state/settings"
 
     let cmdType = null
     const cmdTypes = [
@@ -29,43 +31,49 @@
         cmdType = null
     }
 
-    const newCommand = {
+    const newCommandEntry = {
         chat: null,
         redeem: null,
         timer: null,
     }
     const create = async (type) => {
-        const newInfo = await newCommand[type].show()
-        console.log(newInfo)
+        const newcmd = await newCommandEntry[type].show()
+        console.log(newcmd)
 
-        if (newInfo === null) {
+        if (newcmd === null) {
             return
         }
 
-        pubsub.publish(
+        const id = `${type}:${newcmd.name}`
+        bridge.emit(
             "settings.change",
             {
-                "commands.$push": {
-                    trigger: type,
-                    info: newInfo,
-                    settings: null,
+                [`commands.${id}.$set`]: {
+                    ...newcmd,
+                    id,
+                    type,
+                    enabled: true,
                 }
             }
         )
     }
 </script>
 
-<Dialog persistent bind:this={newCommand.chat} component={NewTextCommand} />
+<Dialog
+    persistent
+    bind:this={newCommandEntry.chat}
+    component={NewTextCommand}
+/>
 <Paper footer>
-    {#each $settings.commands as command}
-        <div>
-            {command.info.plugin} - {command.info.command}
-        </div>
-    {:else}
-        <div>
-            No commands :(
-        </div>
-    {/each}
+    <Flex direction="column">
+        {#each $commandList as command}
+            <Command {command} />
+        {:else}
+            <div>
+                No commands :(
+            </div>
+        {/each}
+    </Flex>
 
     <Footer>
         <Select

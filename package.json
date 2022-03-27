@@ -12,6 +12,7 @@
   "devDependencies": {},
   "dependencies": {
     "@axel669/array-sort": "^0.1.0",
+    "@axel669/event-bridge": "^1.0.2",
     "@axel669/immutable-update": "^1.0.2",
     "@axel669/norn": "^4.0.0",
     "@rollup/plugin-commonjs": "^17.0.0",

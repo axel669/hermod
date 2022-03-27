@@ -12,8 +12,6 @@
 
     import ThemeSelector from "./theme-selector.svelte"
 
-    import pubsub from "pubsub-js"
-
     import Bot from "./bot.svelte"
     import Commands from "./commands.svelte"
     import Plugins from "./plugins.svelte"
@@ -39,11 +37,6 @@
         { label: "Plugins", value: "plugins" },
         { label: "Commands", value: "commands" },
     ]
-
-    pubsub.subscribe(
-        "*",
-        console.log
-    )
 </script>
 
 <style>

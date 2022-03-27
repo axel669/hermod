@@ -7,6 +7,11 @@
   resolved "https://registry.yarnpkg.com/@axel669/array-sort/-/array-sort-0.1.0.tgz#e024f0bafb3a6010e7545ca4ddaa8d36fc27a1da"
   integrity sha512-7fucLTKIqkQWLv+op5FDa8MXRDtpRTTAnFU2dG+/1imJHJI2pAyUbpXCIU9SO5so+SKg5Yn2mtuQhTnx/pf2qg==
 
+"@axel669/event-bridge@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@axel669/event-bridge/-/event-bridge-1.0.2.tgz#43da1537d1f7bc243dfda3928771a6aa8216e0c3"
+  integrity sha512-xTnGEjDst6xL4js5ZWsSTHPBL2E0C+umPhRKMYDuH0EaZuCLa5SJyLj5WVX9Y575D9dkEOI8F1B9qCvAWFN1XA==
+
 "@axel669/immutable-update@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@axel669/immutable-update/-/immutable-update-1.0.2.tgz#139517fac42b504646518caae30baca233388484"

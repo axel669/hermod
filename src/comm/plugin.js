@@ -2,7 +2,7 @@ import pattern from "url-pattern"
 
 const baseURL = "https://cdn.jsdelivr.net/gh"
 const releasePattern = new pattern(
-    "https\\://github.com/(:author)/(:command)/releases/tag/*"
+    "https\\://github.com/(:author)/(:name)/releases/tag/*"
 )
 
 export const parseURL = (url) => {
@@ -12,10 +12,12 @@ export const parseURL = (url) => {
         return
     }
 
-    const { author, command, _: version } = patternInfo
+    const { author, name, _: version } = patternInfo
 
-    return {author, command, version}
+    return {author, name, version}
 }
 
+export const genGithubURL = ({ author, name, version }) =>
+    `https\\://github.com/${author}/${name}/releases/tag/${version}`
 export const genScriptURL = (info) =>
-    `${baseURL}/${info.author}/${info.command}@${info.version}/command.js`
+    `${baseURL}/${info.author}/${info.name}@${info.version}/command.js`

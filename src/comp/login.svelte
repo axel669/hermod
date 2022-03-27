@@ -1,8 +1,6 @@
 <script>
     import { Button, Icon } from "svelte-doric"
 
-    import user from "@/state/user"
-
     let form = null
     const clientID = "mrz3t77h5octc2glld7a2qaw8vuo7q"
     const redirectURI = location.origin

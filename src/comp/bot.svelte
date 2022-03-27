@@ -1,6 +1,7 @@
 <script>
     import {
         Button,
+        CircleSpinner as Spinner,
         Icon,
         Paper,
         Text,
@@ -13,24 +14,30 @@
     import http from "@/comm/http"
     import user from "@/state/user"
 
-    import chat, {chatConnected} from "./bot/chat"
-    import tps, {tpsConnected} from "./bot/twitch-pubsub"
-    // let pubsub = null
+    import twitch, {connected} from "./bot/twitch"
 
     // let joinMessage = "bot has joined!"
     // let leaveMessage = "bot is leaving 👋"
     let joinMessage = ""
     let leaveMessage = ""
 
+    let connecting = false
+
     const join = async () => {
-        chat.join($user, joinMessage)
-        tps.join($user)
+        connecting = true
+        await twitch.join($user, joinMessage)
+        connecting = false
     }
     const leave = async () => {
-        chat.leave(leaveMessage)
-        tps.leave()
+        twitch.leave(leaveMessage)
     }
 </script>
+
+<style>
+    div {
+        text-align: center;
+    }
+</style>
 
 <Paper card>
     <TitleBar compact>
@@ -44,7 +51,7 @@
                     Chat
                     <span class="fa-stack">
                         <i class="fas fa-wifi fa-stack-1x" />
-                        {#if $chatConnected === false}
+                        {#if $connected.chat === false}
                             <i class="fas fa-slash fa-stack-1x" />
                         {/if}
                     </span>
@@ -53,7 +60,7 @@
                     PubSub
                     <span class="fa-stack">
                         <i class="fas fa-wifi fa-stack-1x" />
-                        {#if $tpsConnected === false}
+                        {#if $connected.pubsub === false}
                             <i class="fas fa-slash fa-stack-1x" />
                         {/if}
                     </span>
@@ -73,14 +80,20 @@
         </Flex>
 
         <Flex direction="column" gap="2px" padding="2px">
-        {#if $chatConnected}
-            <Button on:tap={leave} variant="outline" color="primary">
-                Disconnect
-            </Button>
+        {#if connecting}
+            <div>
+                <Spinner size={40} /> Connecting
+            </div>
         {:else}
-            <Button on:tap={join} variant="outline" color="secondary">
-                Connect
-            </Button>
+            {#if $connected.either}
+                <Button on:tap={leave} variant="outline" color="primary">
+                    Disconnect
+                </Button>
+            {:else}
+                <Button on:tap={join} variant="outline" color="secondary">
+                    Connect
+                </Button>
+            {/if}
         {/if}
         </Flex>
     </Action>

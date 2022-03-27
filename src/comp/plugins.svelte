@@ -9,24 +9,23 @@
     } from "svelte-doric"
     import { Flex } from "svelte-doric/layout"
 
-    import pubsub from "pubsub-js"
-
     import PluginDisplay from "./plugins/plugin-display.svelte"
 
+    import bridge from "@/comm/bridge"
     import worker from "@/comm/worker"
     import {parseURL} from "@/comm/plugin"
     import {toast} from "@/comp/toast.svelte"
 
-    import settings from "@/state/settings"
+    import { userPluginList } from "@/state/settings"
 
     let importing = false
     const test = async () => {
         importing = true
-        const pluginInfo = await worker.importPlugin(url)
+        const importedInfo = await worker.importPlugin(pluginInfo)
 
-        pubsub.publish(
+        bridge.emit(
             "settings.change",
-            { "plugins.$push": pluginInfo }
+            { [`plugins.${importedInfo.id}.$set`]: importedInfo }
         )
 
         importing = false
@@ -50,7 +49,7 @@
 
             <Flex direction="column">
                 <div>
-                    {pluginInfo.command} v{pluginInfo.version}
+                    {pluginInfo.name} v{pluginInfo.version}
                 </div>
                 <div>
                     by {pluginInfo.author}
@@ -73,7 +72,7 @@
         </Paper>
     {/if}
 
-    {#each $settings.plugins as plugin}
+    {#each $userPluginList as plugin}
         <PluginDisplay {plugin} />
     {/each}
 </Flex>

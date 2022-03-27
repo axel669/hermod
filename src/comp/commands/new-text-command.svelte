@@ -11,27 +11,30 @@
     import { DialogContent } from "svelte-doric/dialog"
     import { Action, Flex, Grid } from "svelte-doric/layout"
 
-    import settings from "@/state/settings"
+    import {writable, get} from "svelte/store"
+
+    import SettingsEditor from "./settings-editor.svelte"
+
+    import { pluginList } from "@/state/settings"
 
     export let close
 
-    let command = ""
-    let plugin = "text"
+    let name = ""
+    let plugin = $pluginList[0]
+    let config = {}
 
-    const plugins = [
-        { label: "Text", value: "text" },
-        ...$settings.plugins.map(
-            (plugin) => ({
-                label: `${plugin.command} v${plugin.version}`,
-                value: plugin.name
-            })
-        )
-    ]
+    const options = $pluginList.map(
+        plugin => ({
+            label: `${plugin.label} by ${plugin.author}`,
+            value: plugin,
+        })
+    )
 
     const cancel = () => close(null)
     const create = () => close({
-        command,
-        plugin,
+        name,
+        config,
+        pluginID: plugin.id,
     })
 </script>
 
@@ -39,7 +42,7 @@
 top="15%"
 left="50%"
 originX="50%"
-width="min(70vw, 320px)"
+width="max(45vw, 320px)"
 height="60vh"
 >
     <Paper card>
@@ -48,13 +51,14 @@ height="60vh"
         </TitleBar>
         <Action>
             <Flex direction="column">
-                <TextInput label="Command" bind:value={command}>
+                <TextInput label="Command" bind:value={name}>
                     <Adornment slot="start">
                         <Text adorn>!</Text>
                     </Adornment>
                 </TextInput>
 
-                <Select label="Plugin" bind:value={plugin} options={plugins} />
+                <Select label="Plugin" bind:value={plugin} {options} />
+                <SettingsEditor bind:config settings={plugin.settings} />
             </Flex>
             <Grid cols={2}>
                 <Button color="danger" on:tap={cancel}>

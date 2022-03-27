@@ -8,34 +8,40 @@
     } from "svelte-doric"
     import { Dialog, Confirm } from "svelte-doric/dialog"
     import { Flex } from "svelte-doric/layout"
-    import pubsub from "pubsub-js"
 
+    import bridge from "@/comm/bridge"
+    import worker from "@/comm/worker"
     import { toast } from "../toast.svelte"
-    import settings from "@/state/settings"
+    import { commandList } from "@/state/settings"
 
     export let plugin
 
     let open = false
 
-    $: usedCount = $settings.commands
+    $: usedCount = $commandList
         .filter(
-            (cmd) => cmd.info.plugin === plugin.name
+            (cmd) => cmd.pluginID === plugin.id
         )
         .length
     let confirm = null
     const removePlugin = async () => {
         const remove = await confirm.show({
             title: "Confirm",
-            message: `Are you sure you want to remove ${plugin.command}?`
+            message: `Are you sure you want to remove ${plugin.name} v${plugin.version}?`
         })
 
         if (remove !== true) {
             return
         }
 
-        pubsub.publish(
+        const unloaded = worker.removePlugin(plugin)
+        if (unloaded === false) {
+            console.log("couldnt unload?")
+            return
+        }
+        bridge.emit(
             "settings.change",
-            { "plugins.$filter": (p) => p !== plugin }
+            { "plugins.$unset": [plugin.id] }
         )
         toast("Plugin removed")
         open = false
@@ -52,7 +58,7 @@
 
 <ControlDrawer bind:open>
     <TitleBar compact>
-        {plugin.command}
+        {plugin.name}
     </TitleBar>
 
     <Flex direction="column">
@@ -65,6 +71,15 @@
         <div>
             Commands using: {usedCount}
         </div>
+
+        <div>
+            Triggers: {JSON.stringify(plugin.triggers)}
+        </div>
+        <div>
+            Settings<br />
+            <pre>{JSON.stringify(plugin.settings, null, 2)}</pre>
+        </div>
+
         <Button on:tap={removePlugin} color="danger" disabled={usedCount !== 0}>
             <Icon name="trash" />
             Delete
@@ -76,7 +91,9 @@
 <Button on:tap={() => open = true} variant="outline">
     <info-area>
         <Text adorn>
-            {plugin.author}/{plugin.command}
+            {plugin.label}
+            <br />
+            by {plugin.author}
         </Text>
         <Text adorn>
             <Icon name="caret-right" />

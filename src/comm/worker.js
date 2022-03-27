@@ -16,8 +16,8 @@ const workerCall = (message) => new Promise(
 )
 
 export default {
-    importPlugin: (url) => {
-        const info = parseURL(url)
+    importPlugin: (info) => {
+        // const info = parseURL(url)
 
         if (info === null) {
             return
@@ -37,9 +37,7 @@ export default {
     removePlugin: (plugin) => workerCall({
         type: "unload",
         args: {
-            name: plugin.name,
-            version: plugin.version,
-            auithor: plugin.author,
+            id: plugin.id
         }
     })
 }
