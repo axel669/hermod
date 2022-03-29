@@ -1,25 +1,50 @@
 console.log("Command worker running o7")
 
-const commandMap = {
-    "text": {
-        chat: async (info) => {
-            const {settings: {response}, parts, trigger} = info
-            return {
-                say: response
-                    .replace(
-                        /\$\{(\d)\}/g,
-                        (matched, n) => {
-                            const index = parseInt(n)
-                            if (isNaN(n)) {
-                                return matched
-                            }
-                            return parts[index - 1]
-                        }
-                    )
-                    .replace(/\$\{user\}/g, trigger.tags.displayName)
+function textVariables(text, parts, tags) {
+    return text.replace(
+        /\$\{(\d)\}/g,
+        (matched, n) => {
+            const index = parseInt(n)
+            if (isNaN(n)) {
+                return matched
             }
+            return parts[index - 1]
         }
-    }
+    )
+    .replace(/\$\{user\}/g, tags.displayName)
+    .replace(/\$\{message\}/g, parts.join(" "))
+}
+const pluginMap = {
+    "text": {
+        chat: async (args) => {
+            const { parts, tags, config } = args
+            return {
+                chat: textVariables(config.text, parts, tags),
+                reply: config.reply,
+            }
+        },
+        timer: async (args) => {
+            const { parts, tags, config } = args
+            return {
+                // chat: textVariables(config.text, parts, tags)
+                chat: config.text
+            }
+        },
+    },
+    "speech": {
+        chat: async (args) => {
+            const { parts, tags, config } = args
+            return {
+                speak: textVariables(config.text, parts, tags)
+            }
+        },
+        redeem: async (args) => {
+            const { redemption, config } = args
+            return {
+                speak: redemption.user_input
+            }
+        },
+    },
 }
 
 const genID = () =>
@@ -30,8 +55,8 @@ const commands = {
         console.log("importing", author, name, version)
         const {settings, ...triggers} = await import(scriptURL)
         const loadID = id ?? genID()
-        commandMap[loadID] = triggers
-        console.log(commandMap)
+        pluginMap[loadID] = triggers
+        console.log(pluginMap)
         return {
             author,
             name,
@@ -42,20 +67,20 @@ const commands = {
             label: `${name} v${version}`,
         }
     },
-    exec: async (args) => {
-        const { name, ...commandArgs } = args
-        if (commandMap[name] === undefined) {
-            throw new Error("command not found")
+    exec: async (executionInfo) => {
+        const { pluginID, type, args } = executionInfo
+        if (pluginMap[pluginID] === undefined) {
+            throw new Error("plugin not found")
         }
 
-        return await commandMap[name](commandArgs)
+        return await pluginMap[pluginID][type](args)
     },
     unload: async (args) => {
         const { id } = args
 
         console.log(`Unloading ${id}`)
 
-        delete commandMap[id]
+        delete pluginMap[id]
 
         return {success: true}
     }

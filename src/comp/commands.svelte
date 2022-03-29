@@ -14,6 +14,8 @@
 
     import Command from "./commands/command.svelte"
     import NewTextCommand from "./commands/new-text-command.svelte"
+    import NewRedeemCommand from "./commands/new-redeem-command.svelte"
+    import NewTimerCommand from "./commands/new-timer-command.svelte"
 
     import twitchAPI from "@/comm/twitch"
     import user from "@/state/user"
@@ -21,9 +23,9 @@
 
     let cmdType = null
     const cmdTypes = [
-        { label: "Chat", value: "chat" },
-        { label: "Redeem", value: "redeem" },
-        { label: "Timer", value: "timer" },
+        { label: "Chat", value: "chat", icon: "message" },
+        { label: "Redeem", value: "redeem", icon: "circle" },
+        { label: "Timer", value: "timer", icon: "hourglass" },
     ]
 
     $: if (cmdType !== null) {
@@ -38,7 +40,6 @@
     }
     const create = async (type) => {
         const newcmd = await newCommandEntry[type].show()
-        console.log(newcmd)
 
         if (newcmd === null) {
             return
@@ -52,7 +53,6 @@
                     ...newcmd,
                     id,
                     type,
-                    enabled: true,
                 }
             }
         )
@@ -63,6 +63,16 @@
     persistent
     bind:this={newCommandEntry.chat}
     component={NewTextCommand}
+/>
+<Dialog
+    persistent
+    bind:this={newCommandEntry.redeem}
+    component={NewRedeemCommand}
+/>
+<Dialog
+    persistent
+    bind:this={newCommandEntry.timer}
+    component={NewTimerCommand}
 />
 <Paper footer>
     <Flex direction="column">

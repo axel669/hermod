@@ -18,15 +18,15 @@
 
     let confirm = null
     const edit = async () => {
-        const updatedConfig = await editor.show({
+        const newConfig = await editor.show({
             command,
         })
 
-        if (updatedConfig === null) {
+        if (newConfig === null) {
             return
         }
 
-        if (updatedConfig === false) {
+        if (newConfig === false) {
             bridge.emit(
                 "settings.change",
                 { "commands.$unset": [command.id] }
@@ -37,14 +37,19 @@
         bridge.emit(
             "settings.change",
             {
-                [`commands.${command.id}.config.$set`]: updatedConfig.config,
-                [`commands.${command.id}.enabled.$set`]: updatedConfig.enabled,
+                [`commands.${command.id}.config.$set`]: newConfig.config,
+                [`commands.${command.id}.enabled.$set`]: newConfig.enabled,
+                [`commands.${command.id}.userLevel.$set`]: newConfig.userLevel,
+                [`commands.${command.id}.freq.$set`]: newConfig.freq,
+                [`commands.${command.id}.redeem.$set`]: newConfig.redeem,
             }
         )
     }
 
     const cmdIcon = {
-        chat: "message"
+        chat: "message",
+        redeem: "circle",
+        timer: "hourglass"
     }
 
     $: color = command.enabled ? "secondary" : "danger"

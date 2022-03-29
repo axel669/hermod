@@ -54,7 +54,7 @@ const plugins = derived(
         ...builtInPlugins,
     })
 )
-const commands = derived(settings, (settings) => settings.commands)
+const commands = derived(settings, (settings) => settings?.commands ?? null)
 
 const loaded = derived(settings, (settings) => settings !== null)
 
@@ -66,4 +66,3 @@ export {
     commands,
     loaded,
 }
-// export default settings

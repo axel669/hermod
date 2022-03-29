@@ -20,11 +20,11 @@
     export let close
 
     const plugins = $pluginList.filter(
-        p => p.triggers.includes("chat")
+        p => p.triggers.includes("timer")
     )
-
     let name = ""
-    let plugin = $pluginList[0]
+    let freq = 60
+    let plugin = plugins[0]
     let config = {}
     let userLevel = "anyone"
     let enabled = true
@@ -42,6 +42,7 @@
         config,
         userLevel,
         enabled,
+        freq,
         pluginID: plugin.id,
     })
 </script>
@@ -55,23 +56,20 @@ height="60vh"
 >
     <Paper card>
         <TitleBar compact>
-            New Text Command
+            New Timer Command
         </TitleBar>
         <Action>
             <Flex direction="column">
-                <TextInput label="Command" bind:value={name}>
-                    <Adornment slot="start">
-                        <Text adorn>!</Text>
-                    </Adornment>
-                </TextInput>
+                <TextInput label="Command" bind:value={name} />
 
                 <Select label="Plugin" bind:value={plugin} {options} />
 
                 <SettingsEditor
-                    type="chat"
+                    type="timer"
                     bind:config
                     bind:userLevel
                     bind:enabled
+                    bind:freq
                     settings={plugin.settings}
                 />
             </Flex>
@@ -79,7 +77,7 @@ height="60vh"
                 <Button color="danger" on:tap={cancel}>
                     Cancel
                 </Button>
-                <Button color="secondary" on:tap={create}>
+                <Button color="secondary" on:tap={create} disabled={freq < 15}>
                     Create
                 </Button>
             </Grid>

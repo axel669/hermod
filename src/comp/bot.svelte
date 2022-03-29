@@ -16,10 +16,10 @@
 
     import twitch, {connected} from "./bot/twitch"
 
-    // let joinMessage = "bot has joined!"
-    // let leaveMessage = "bot is leaving 👋"
-    let joinMessage = ""
-    let leaveMessage = ""
+    let joinMessage = "bot has joined!"
+    let leaveMessage = "bot is leaving 👋"
+    // let joinMessage = ""
+    // let leaveMessage = ""
 
     let connecting = false
 

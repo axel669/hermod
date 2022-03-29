@@ -20,11 +20,11 @@
     export let close
 
     const plugins = $pluginList.filter(
-        p => p.triggers.includes("chat")
+        p => p.triggers.includes("redeem")
     )
-
     let name = ""
-    let plugin = $pluginList[0]
+    let redeem = ""
+    let plugin = plugins[0]
     let config = {}
     let userLevel = "anyone"
     let enabled = true
@@ -42,6 +42,7 @@
         config,
         userLevel,
         enabled,
+        redeem,
         pluginID: plugin.id,
     })
 </script>
@@ -55,23 +56,20 @@ height="60vh"
 >
     <Paper card>
         <TitleBar compact>
-            New Text Command
+            New Channel Point Redeem Command
         </TitleBar>
         <Action>
             <Flex direction="column">
-                <TextInput label="Command" bind:value={name}>
-                    <Adornment slot="start">
-                        <Text adorn>!</Text>
-                    </Adornment>
-                </TextInput>
+                <TextInput label="Command" bind:value={name} />
 
                 <Select label="Plugin" bind:value={plugin} {options} />
 
                 <SettingsEditor
-                    type="chat"
+                    type="redeem"
                     bind:config
                     bind:userLevel
                     bind:enabled
+                    bind:redeem
                     settings={plugin.settings}
                 />
             </Flex>

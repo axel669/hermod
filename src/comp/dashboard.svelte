@@ -10,6 +10,8 @@
         TitleBar,
     } from "svelte-doric"
 
+    import "@/state/command-timers"
+
     import ThemeSelector from "./theme-selector.svelte"
 
     import Bot from "./bot.svelte"
@@ -31,7 +33,7 @@
         $user = false
     }
 
-    let tabGroup = "commands"
+    let tabGroup = "bot"
     const options = [
         { label: "Bot", value: "bot" },
         { label: "Plugins", value: "plugins" },

@@ -52,14 +52,14 @@ const user = writable(
         }
 
         user.profileImage = twitchUserInfo.profile_image_url
+
         const settings = JSON.parse(
             localStorage.settings ?? defaultSettings
         )
-        bridge.emit("settings.load", settings)
-
         for (const plugin of Object.values(settings.plugins)) {
             worker.importPlugin(plugin)
         }
+        bridge.emit("settings.load", settings)
         set(user)
     }
 )

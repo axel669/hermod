@@ -1,4 +1,8 @@
-import { writable } from "svelte/store"
+import { writable, get } from "svelte/store"
+
+import { commands, commandList } from "@/state/settings"
+import worker from "@/comm/worker"
+import bridge from "@/comm/bridge"
 
 let comms = null
 const connected = writable({
@@ -13,9 +17,66 @@ const say = async (message, replyID) => {
     }
     await comms.say(`/me ${message}`, replyID)
 }
-const speak = (message, voice = "UK English Male") => {
-    responsiveVoice.speak(message, voice)
+const chat = async (result, replyID) => {
+    if (result.chat === undefined) {
+        return
+    }
+    const reply = result.reply ? replyID : undefined
+    say(result.chat, reply)
 }
+const speak = (result, voice = "UK English Male") => {
+    if (result.speak === undefined) {
+        return
+    }
+    responsiveVoice.speak(result.speak, voice)
+}
+
+bridge.on(
+    "timer.trigger",
+    async (evt) => {
+        if (get(connected).chat === false) {
+            return
+        }
+
+        const command = get(commands)[evt.data]
+        const result = await worker.sendCommand({
+            pluginID: command.pluginID,
+            type: "timer",
+            args: {
+                config: command.config
+            }
+        })
+
+        chat(result)
+    }
+)
+
+function tagLevel (tags) {
+    if (tags.broadcaster === true) {
+        return 0
+    }
+    if (tags.mod === true) {
+        return 1
+    }
+    if (tags.vip === true) {
+        return 2
+    }
+    if (tags.subscriber === true) {
+        return 3
+    }
+    return 10
+}
+const commandLevels = {
+    anyone: 10,
+    mods: 1,
+    vip: 2,
+    subs: 3,
+    caster: 4,
+}
+function commandLevel(command) {
+    return commandLevels[command.userLevel]
+}
+
 const join = (user, joinMessage) => {
     comms = twitch.RealTime({
         user: {
@@ -31,37 +92,69 @@ const join = (user, joinMessage) => {
 
     comms.on(
         "chat.message",
-        (evt) => {
-            if (evt.data.message.startsWith("!greetings") === false) {
+        async (evt) => {
+            if (evt.data.message.startsWith("!") === false) {
                 return
             }
 
-            const replyID = evt.data.tags.id
-            say("Hi peachyWave", replyID)
-            // speak(`Hi ${evt.data.tags.displayName}`)
+            const { message, tags } = evt.data
+
+            const [msgcmd, ...parts] = message.slice(1).split(/\s+/)
+            const cmd = msgcmd.toLowerCase()
+
+            const command = get(commands)[`chat:${cmd}`]
+
+            if (command === undefined) {
+                return
+            }
+
+            if (tagLevel(tags) > commandLevel(command)) {
+                return
+            }
+
+            const executionInfo = {
+                pluginID: command.pluginID,
+                type: "chat",
+                args: {
+                    cmd,
+                    parts,
+                    tags,
+                    config: command.config,
+                }
+            }
+
+            const result = await worker.sendCommand(executionInfo)
+
+            speak(result)
+            chat(result, tags.id)
         }
     )
     comms.on(
         "channel-points-channel-v1",
-        (evt) => {
-            const redeem = evt.data.redemption.reward.title
+        async (evt) => {
+            const { title } = evt.data.redemption.reward
 
-            if (redeem !== "Posh Idea Theft") {
-                return
+            const matches = get(commandList).filter(
+                cmd => cmd.redeem === title
+            )
+
+            const results = await Promise.all(
+                matches.map(
+                    cmd => worker.sendCommand({
+                        pluginID: cmd.pluginID,
+                        type: "redeem",
+                        args: {
+                            redemption: evt.data.redemption,
+                            config: cmd.config
+                        }
+                    })
+                )
+            )
+
+            for (const result of results) {
+                speak(result)
+                chat(result)
             }
-
-            const msg = evt.data.redemption.user_input
-            speak(msg)
-            // const msg = evt.data.redemption.user_input
-            // if (msg === undefined) {
-            //     return
-            // }
-
-            // const name = evt.data.redemption.user.display_name
-            // say(
-            //     `hey @axel669 you should read things. ${name} said ${msg}`
-            // )
-            // console.log(evt)
         }
     )
 

@@ -23,7 +23,7 @@
     const { command } = options
     const plugin = $plugins[command.pluginID]
     const {name, type} = command
-    let { enabled } = command
+    let { enabled, userLevel, freq, redeem } = command
     let config = {...command.config}
     let removeDialog
 
@@ -43,7 +43,7 @@
 
     const cancel = () => close(null)
     const remove = () => close(false)
-    const save = () => close({enabled, config})
+    const save = () => close({ enabled, config, userLevel, freq, redeem })
 </script>
 
 <Dialog bind:this={removeDialog} component={Confirm} />
@@ -66,10 +66,15 @@ height="60vh"
         </TitleBar>
         <Action>
             <Flex direction="column">
-                <Checkbox bind:checked={enabled} color="primary">
-                    Enabled
-                </Checkbox>
-                <SettingsEditor bind:config settings={plugin.settings} />
+                <SettingsEditor
+                    {type}
+                    bind:config
+                    bind:enabled
+                    bind:userLevel
+                    bind:freq
+                    bind:redeem
+                    settings={plugin.settings}
+                />
             </Flex>
             <Grid cols={2}>
                 <Button color="danger" on:tap={cancel}>
