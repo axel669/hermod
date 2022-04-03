@@ -1,51 +1,82 @@
-import { writable, get } from "svelte/store"
+import { readable, get, derived } from "svelte/store"
 import update from "@axel669/immutable-update"
-import fulla from "@/comms/fulla"
-import crypto from "@/state/crypto"
 
-const source = writable(null)
-const updateSource = (updates) => source.update(
-    settings => update(settings, updates, true)
-)
+import sort from "@axel669/array-sort"
+import bridge from "@/comm/bridge"
+import api from "@/comm/api"
 
-let initialized = false
-source.subscribe(
-    async (settings) => {
-        if (settings === null) {
-            return
-        }
-        if (initialized === false) {
-            initialized = true
-            return
-        }
-        await fulla.save(
-            await crypto.encrypt(settings)
-        )
-        console.log("settings updated")
-    }
-)
-export default {
-    subscribe: source.subscribe,
-    set: source.set,
-    load: (settings) => {
-        source.set(settings)
-    },
-    update: (changes) => source.set(
-        update(
-            get(source),
-            changes
-        )
-    ),
-    updateCommand: (command, changed) => {
-        const state = get(source)
-        const index = state.commands.indexOf(command)
-        source.set(
-            update(
-                state,
-                {
-                    [`commands.${index}.$set`]: changed
-                }
-            )
+import builtInPlugins from "./settings/builtin-plugins"
+
+function debounce(time, func) {
+    let id = null
+    return function(...args) {
+        clearTimeout(id)
+        id = setTimeout(
+            () => func(...args),
+            time
         )
     }
 }
+
+const saveSettings = debounce(5000, api.saveSettings)
+const settings = readable(
+    null,
+    (set) => {
+        bridge.on(
+            "settings.change",
+            (evt) => {
+                console.log(evt)
+                const next = update(
+                    get(settings),
+                    evt.data
+                )
+                saveSettings(next)
+                set(next)
+            }
+        )
+        bridge.on(
+            "settings.load",
+            (evt) => set(evt.data)
+        )
+    }
+)
+// settings.subscribe(console.log)
+
+const userPluginList = derived(
+    settings,
+    (settings) => Object.values(settings.plugins)
+)
+const pluginList = derived(
+    settings,
+    (settings) => [
+        ...Object.values(builtInPlugins),
+        ...Object.values(settings.plugins),
+    ]
+)
+const commandList = derived(
+    settings,
+    (settings) => Object.values(settings.commands).sort(
+        sort.map(item => item.id, sort.natural)
+    )
+)
+
+const plugins = derived(
+    settings,
+    (settings) => ({
+        ...settings.plugins,
+        ...builtInPlugins,
+    })
+)
+const commands = derived(settings, (settings) => settings?.commands ?? null)
+
+const loaded = derived(settings, (settings) => settings !== null)
+
+export {
+    userPluginList,
+    pluginList,
+    commandList,
+    plugins,
+    commands,
+    loaded,
+}
+export default settings

@@ -1,56 +1,86 @@
 console.log("Command worker running o7")
 
-const commandMap = {
-    "simple": async (info) => {
-        const {settings: {response}, parts, user} = info
-        return {
-            say: response
-                .replace(
-                    /\$\{(\d)\}/g,
-                    (matched, n) => {
-                        const index = parseInt(n)
-                        if (isNaN(n)) {
-                            return matched
-                        }
-                        return parts[index - 1]
-                    }
-                )
-                .replace(/\$\{user\}/g, user["display-name"])
+function textVariables(text, parts, tags) {
+    return text.replace(
+        /\$\{(\d)\}/g,
+        (matched, n) => {
+            const index = parseInt(n)
+            if (isNaN(n)) {
+                return matched
+            }
+            return parts[index - 1]
         }
-    }
+    )
+    .replace(/\$\{user\}/g, tags.displayName)
+    .replace(/\$\{message\}/g, parts.join(" "))
 }
-const settingsMap = {}
+const pluginMap = {
+    "text": {
+        chat: async (args) => {
+            const { parts, tags, config } = args
+            return {
+                chat: textVariables(config.text, parts, tags),
+                reply: config.reply,
+            }
+        },
+        timer: async (args) => {
+            const { parts, tags, config } = args
+            return {
+                // chat: textVariables(config.text, parts, tags)
+                chat: config.text
+            }
+        },
+    },
+    "speech": {
+        chat: async (args) => {
+            const { parts, tags, config } = args
+            return {
+                speak: textVariables(config.text, parts, tags)
+            }
+        },
+        redeem: async (args) => {
+            const { redemption, config } = args
+            return {
+                speak: redemption.user_input
+            }
+        },
+    },
+}
 
+const genID = () =>
+    Date.now().toString(16)
 const commands = {
     load: async (args) => {
-        const { scriptURL, author, command, version } = args
-        console.log("importing", author, command, version)
-        const name = `${author}:${command}:${version}`
-        const commandInfo = await import(scriptURL)
-        commandMap[name] = commandInfo.default
-        settingsMap[name] = commandInfo.settings
+        const { scriptURL, author, name, version, id } = args
+        console.log("importing", author, name, version)
+        const {settings, ...triggers} = await import(scriptURL)
+        const loadID = id ?? genID()
+        pluginMap[loadID] = triggers
+        console.log(pluginMap)
         return {
             author,
-            command,
-            version,
             name,
-            settings: settingsMap[name]
+            version,
+            id: loadID,
+            settings: settings ?? [],
+            triggers: Object.keys(triggers),
+            label: `${name} v${version}`,
         }
     },
-    exec: async (args) => {
-        const { name, ...commandArgs } = args
-        if (commandMap[name] === undefined) {
-            throw new Error("command not found")
+    exec: async (executionInfo) => {
+        const { pluginID, type, args } = executionInfo
+        if (pluginMap[pluginID] === undefined) {
+            throw new Error("plugin not found")
         }
 
-        return await commandMap[name](commandArgs)
+        return await pluginMap[pluginID][type](args)
     },
     unload: async (args) => {
-        const { author, command, version } = args
-        const name = `${author}:${command}:${version}`
+        const { id } = args
 
-        delete commandMap[name]
-        delete settingsMap[name]
+        console.log(`Unloading ${id}`)
+
+        delete pluginMap[id]
 
         return {success: true}
     }

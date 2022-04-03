@@ -7,6 +7,11 @@
   resolved "https://registry.yarnpkg.com/@axel669/array-sort/-/array-sort-0.1.0.tgz#e024f0bafb3a6010e7545ca4ddaa8d36fc27a1da"
   integrity sha512-7fucLTKIqkQWLv+op5FDa8MXRDtpRTTAnFU2dG+/1imJHJI2pAyUbpXCIU9SO5so+SKg5Yn2mtuQhTnx/pf2qg==
 
+"@axel669/event-bridge@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@axel669/event-bridge/-/event-bridge-1.0.2.tgz#43da1537d1f7bc243dfda3928771a6aa8216e0c3"
+  integrity sha512-xTnGEjDst6xL4js5ZWsSTHPBL2E0C+umPhRKMYDuH0EaZuCLa5SJyLj5WVX9Y575D9dkEOI8F1B9qCvAWFN1XA==
+
 "@axel669/immutable-update@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@axel669/immutable-update/-/immutable-update-1.0.2.tgz#139517fac42b504646518caae30baca233388484"
@@ -608,6 +613,11 @@ picomatch@^2.0.5, picomatch@^2.2.1, picomatch@^2.2.2:
   resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-2.2.2.tgz#21f333e9b6b8eaff02468f5146ea406d345f4dad"
   integrity sha512-q0M/9eZHzmr0AulXyPwNfZjtwZ/RBZlbN3K3CErVrk50T2ASYI7Bye0EvekFY3IP1Nt2DHu0re+V2ZHIpMkuWg==
 
+pubsub-js@^1.9.4:
+  version "1.9.4"
+  resolved "https://registry.yarnpkg.com/pubsub-js/-/pubsub-js-1.9.4.tgz#5c8678600e34e95b1269e96c17e1b51dab3ecb5a"
+  integrity sha512-hJYpaDvPH4w8ZX/0Fdf9ma1AwRgU353GfbaVfPjfJQf1KxZ2iHaHl3fAUw1qlJIR5dr4F3RzjGaWohYUEyoh7A==
+
 randombytes@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/randombytes/-/randombytes-2.1.0.tgz#df6f84372f0270dc65cdf6291349ab7a473d4f2a"
@@ -762,10 +772,10 @@ supports-color@^7.0.0:
   dependencies:
     has-flag "^4.0.0"
 
-svelte-doric@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/svelte-doric/-/svelte-doric-1.4.0.tgz#da43918064bd751e8f6d35d66a3a45c9fb29b058"
-  integrity sha512-EdOhTAJDYPHzHPQYX8FlcsT6MZc30b0FhatCrRjpEAk8wgarHG5NN3qiK1aIVQe+oeNfwUV1CMLIsRcbumVVbg==
+svelte-doric@^1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/svelte-doric/-/svelte-doric-1.5.0.tgz#9aa222beaf2a8da47a38d098fe55d9325182b305"
+  integrity sha512-YP0KAQTZmnoEAcNEFtxNRgeBbQmbKEvGsVuitaOXo8zKPwqOWGaO6RTk4VCTcyCDIf/ZRm8AfM338ljJl5oeSA==
 
 svelte@^3.38.2:
   version "3.38.2"

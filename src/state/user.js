@@ -1,30 +1,70 @@
-import jwtDecode from "jwt-decode"
+import {writable} from "svelte/store"
+import pubsub from "pubsub-js"
 
-const userInfo = () => {
+import bridge from "@/comm/bridge"
+import http from "@/comm/http"
+import api from "@/comm/api"
+import twitch from "@/comm/twitch"
+import worker from "@/comm/worker"
+import {Err} from "@/comm/safe"
+
+const login = async () => {
     const url = new URL(document.location.href.toString().replace("#", "?"))
 
-    const hasInfo = (
-        url.searchParams.has("id_token")
-        && url.searchParams.has("access_token")
-    )
-    if (hasInfo === false) {
-        return null
+    if (url.searchParams.has("access_token") === false) {
+        return
     }
 
     const idToken = url.searchParams.get("id_token")
     const accessToken = url.searchParams.get("access_token")
-    const info = jwtDecode(idToken)
 
-    sessionStorage.relog = "true"
     history.replaceState(null, document.title, location.origin)
 
-    return {
-        info,
-        token: {
-            id: idToken,
-            access: accessToken,
-        }
-    }
+    await api.login(accessToken)
 }
 
-export default userInfo()
+const defaultSettings = JSON.stringify({
+    plugins: {},
+    commands: {},
+})
+const user = writable(
+    null,
+    async (set) => {
+        await login()
+
+        const user = await api.currentUser()
+        if (Err(user)) {
+            set(false)
+            bridge.emit("settings.load", {})
+            return
+        }
+
+        twitch.init(user)
+        const twitchUserInfo = await twitch.userInfo(user.userID)
+        if (Err(twitchUserInfo)) {
+            set(false)
+            bridge.emit("settings.load", {})
+            return
+        }
+
+        user.profileImage = twitchUserInfo.profile_image_url
+
+        // const settings = JSON.parse(
+        //     localStorage.settings ?? defaultSettings
+        // )
+        const settings = await api.readSettings()
+        for (const plugin of Object.values(settings.plugins)) {
+            worker.importPlugin(plugin)
+        }
+        bridge.emit("settings.load", settings)
+        set(user)
+    }
+)
+
+const win = (name) =>
+    (obj) => {
+        window[name] = obj
+        return obj
+    }
+
+export default user
