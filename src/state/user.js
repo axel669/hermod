@@ -3,6 +3,7 @@ import pubsub from "pubsub-js"
 
 import bridge from "@/comm/bridge"
 import http from "@/comm/http"
+import api from "@/comm/api"
 import twitch from "@/comm/twitch"
 import worker from "@/comm/worker"
 import {Err} from "@/comm/safe"
@@ -19,12 +20,7 @@ const login = async () => {
 
     history.replaceState(null, document.title, location.origin)
 
-    console.log(
-        await http.postJSON(
-            "https://api.axel669.net/cerberus/auth",
-            {key: accessToken}
-        )
-    )
+    await api.login(accessToken)
 }
 
 const defaultSettings = JSON.stringify({
@@ -36,7 +32,7 @@ const user = writable(
     async (set) => {
         await login()
 
-        const user = await http.get("https://api.axel669.net/cerberus/user")
+        const user = await api.currentUser()
         if (Err(user)) {
             set(false)
             bridge.emit("settings.load", {})
@@ -53,9 +49,10 @@ const user = writable(
 
         user.profileImage = twitchUserInfo.profile_image_url
 
-        const settings = JSON.parse(
-            localStorage.settings ?? defaultSettings
-        )
+        // const settings = JSON.parse(
+        //     localStorage.settings ?? defaultSettings
+        // )
+        const settings = await api.readSettings()
         for (const plugin of Object.values(settings.plugins)) {
             worker.importPlugin(plugin)
         }

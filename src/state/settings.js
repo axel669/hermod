@@ -3,9 +3,22 @@ import update from "@axel669/immutable-update"
 
 import sort from "@axel669/array-sort"
 import bridge from "@/comm/bridge"
+import api from "@/comm/api"
 
 import builtInPlugins from "./settings/builtin-plugins"
 
+function debounce(time, func) {
+    let id = null
+    return function(...args) {
+        clearTimeout(id)
+        id = setTimeout(
+            () => func(...args),
+            time
+        )
+    }
+}
+
+const saveSettings = debounce(5000, api.saveSettings)
 const settings = readable(
     null,
     (set) => {
@@ -17,7 +30,7 @@ const settings = readable(
                     get(settings),
                     evt.data
                 )
-                localStorage.settings = JSON.stringify(next)
+                saveSettings(next)
                 set(next)
             }
         )
@@ -27,7 +40,7 @@ const settings = readable(
         )
     }
 )
-settings.subscribe(console.log)
+// settings.subscribe(console.log)
 
 const userPluginList = derived(
     settings,
@@ -66,3 +79,4 @@ export {
     commands,
     loaded,
 }
+export default settings

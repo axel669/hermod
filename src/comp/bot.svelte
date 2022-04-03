@@ -13,11 +13,15 @@
 
     import http from "@/comm/http"
     import user from "@/state/user"
+    import settings from "@/state/settings"
+    import bridge from "@/comm/bridge"
 
     import twitch, {connected} from "./bot/twitch"
 
-    let joinMessage = "bot has joined!"
-    let leaveMessage = "bot is leaving 👋"
+    let joinMessage = $settings.joinMessage
+    let leaveMessage = $settings.leaveMessage
+    // let joinMessage = "bot has joined!"
+    // let leaveMessage = "bot is leaving 👋"
     // let joinMessage = ""
     // let leaveMessage = ""
 
@@ -30,6 +34,19 @@
     }
     const leave = async () => {
         twitch.leave(leaveMessage)
+    }
+
+    $: if (joinMessage !== $settings.joinMessage) {
+        bridge.emit(
+            "settings.change",
+            { "joinMessage.$set": joinMessage }
+        )
+    }
+    $: if (leaveMessage !== $settings.leaveMessage) {
+         bridge.emit(
+            "settings.change",
+            { "leaveMessage.$set": leaveMessage }
+        )
     }
 </script>
 

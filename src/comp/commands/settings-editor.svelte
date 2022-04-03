@@ -20,8 +20,10 @@
     export let enabled
     export let redeem
     export let freq = 60
+    export let cooldown = 0
 
     let inputFreq = freq.toString()
+    let inputCD = cooldown.toString()
 
     const iden = (real) => real
 
@@ -36,6 +38,7 @@
     $: config = iden(config, settings)
     $: error = (freq < 15) ? "Must be at least 15 seconds." : null
     $: freq = parseInt(inputFreq)
+    $: cooldown = parseInt(inputCD)
 </script>
 
 <style>
@@ -62,23 +65,30 @@
                 bind:value={inputFreq}
             />
         {/if}
-        <!-- <Grid cols={2} padding="0px"> -->
         <Checkbox bind:checked={enabled} color="secondary">
             Enabled
         </Checkbox>
 
         {#if type === "chat"}
-            <Select
-            bind:value={userLevel}
-            label="User Level"
-            {options}
-            let:selected>
-                <user-level-selected slot="selected">
-                    User Level: {selected.label}
-                </user-level-selected>
-            </Select>
+            <Grid cols={2} padding="0px">
+                <Select
+                bind:value={userLevel}
+                label="User Level"
+                {options}
+                let:selected>
+                    <user-level-selected slot="selected">
+                        User Level: {selected.label}
+                    </user-level-selected>
+                </Select>
+
+                <TextInput
+                    type="number"
+                    label="Cooldown"
+                    extra="Use 0 for no cooldown"
+                    bind:value={inputCD}
+                />
+            </Grid>
         {/if}
-        <!-- </Grid> -->
 
         {#each settings as input}
             <svelte:component

@@ -42,6 +42,7 @@
                 [`commands.${command.id}.userLevel.$set`]: newConfig.userLevel,
                 [`commands.${command.id}.freq.$set`]: newConfig.freq,
                 [`commands.${command.id}.redeem.$set`]: newConfig.redeem,
+                [`commands.${command.id}.cooldown.$set`]: newConfig.cooldown,
             }
         )
     }

@@ -28,6 +28,7 @@
     let config = {}
     let userLevel = "anyone"
     let enabled = true
+    let cooldown = 0
 
     const options = plugins.map(
         plugin => ({
@@ -42,6 +43,7 @@
         config,
         userLevel,
         enabled,
+        cooldown,
         pluginID: plugin.id,
     })
 </script>
@@ -72,6 +74,7 @@ height="60vh"
                     bind:config
                     bind:userLevel
                     bind:enabled
+                    bind:cooldown
                     settings={plugin.settings}
                 />
             </Flex>

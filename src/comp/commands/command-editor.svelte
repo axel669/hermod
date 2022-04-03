@@ -23,7 +23,7 @@
     const { command } = options
     const plugin = $plugins[command.pluginID]
     const {name, type} = command
-    let { enabled, userLevel, freq, redeem } = command
+    let { enabled, userLevel, freq, redeem, cooldown } = command
     let config = {...command.config}
     let removeDialog
 
@@ -43,7 +43,9 @@
 
     const cancel = () => close(null)
     const remove = () => close(false)
-    const save = () => close({ enabled, config, userLevel, freq, redeem })
+    const save = () => close({
+        enabled, config, userLevel, freq, redeem, cooldown
+    })
 </script>
 
 <Dialog bind:this={removeDialog} component={Confirm} />
@@ -73,6 +75,7 @@ height="60vh"
                     bind:userLevel
                     bind:freq
                     bind:redeem
+                    bind:cooldown
                     settings={plugin.settings}
                 />
             </Flex>

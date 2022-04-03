@@ -90,6 +90,8 @@ const join = (user, joinMessage) => {
         ]
     })
 
+    const lastInvoke = {}
+
     comms.on(
         "chat.message",
         async (evt) => {
@@ -112,6 +114,14 @@ const join = (user, joinMessage) => {
                 return
             }
 
+            const now = Date.now()
+            const last = lastInvoke[command.id] ?? 0
+
+            if (command.cooldown && (now - last) < (command.cooldown * 1000)) {
+                return
+            }
+
+            lastInvoke[command.id] = now
             const executionInfo = {
                 pluginID: command.pluginID,
                 type: "chat",
