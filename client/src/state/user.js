@@ -49,9 +49,6 @@ const user = writable(
 
         user.profileImage = twitchUserInfo.profile_image_url
 
-        // const settings = JSON.parse(
-        //     localStorage.settings ?? defaultSettings
-        // )
         const settings = await api.readSettings()
         for (const plugin of Object.values(settings.plugins)) {
             worker.importPlugin(plugin)

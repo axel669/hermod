@@ -14,6 +14,9 @@
     import { loaded } from "@/state/settings"
     import currentTheme from "@/state/theme"
 
+    import api from "@/comm/api"
+    window.api = api
+
     const themeMap = {
         light: LightTheme,
         dark: DarkTheme,
