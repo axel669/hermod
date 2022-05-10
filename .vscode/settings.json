@@ -11,5 +11,5 @@
     "liveServer.settings.ignoreFiles": [
         "**/*"
     ],
-    "liveServer.settings.root": "/build"
+    "liveServer.settings.root": "/client/build"
 }

@@ -9,7 +9,7 @@
         TitleBar,
     } from "svelte-doric"
     import { DialogContent } from "svelte-doric/dialog"
-    import { Action, Flex, Grid } from "svelte-doric/layout"
+    import { Flex, Grid } from "svelte-doric/layout"
 
     import {writable, get} from "svelte/store"
 
@@ -55,32 +55,30 @@ width="max(45vw, 320px)"
 height="60vh"
 >
     <Paper card>
-        <TitleBar compact>
+        <TitleBar compact slot="title">
             New Timer Command
         </TitleBar>
-        <Action>
-            <Flex direction="column">
-                <TextInput label="Command" bind:value={name} />
+        <Flex direction="column">
+            <TextInput label="Command" bind:value={name} />
 
-                <Select label="Plugin" bind:value={plugin} {options} />
+            <Select label="Plugin" bind:value={plugin} {options} />
 
-                <SettingsEditor
-                    type="timer"
-                    bind:config
-                    bind:userLevel
-                    bind:enabled
-                    bind:freq
-                    settings={plugin.settings}
-                />
-            </Flex>
-            <Grid cols={2}>
-                <Button color="danger" on:tap={cancel}>
-                    Cancel
-                </Button>
-                <Button color="secondary" on:tap={create} disabled={freq < 15}>
-                    Create
-                </Button>
-            </Grid>
-        </Action>
+            <SettingsEditor
+                type="timer"
+                bind:config
+                bind:userLevel
+                bind:enabled
+                bind:freq
+                settings={plugin.settings}
+            />
+        </Flex>
+        <Grid cols={2} slot="action">
+            <Button color="danger" on:tap={cancel}>
+                Cancel
+            </Button>
+            <Button color="secondary" on:tap={create} disabled={freq < 15}>
+                Create
+            </Button>
+        </Grid>
     </Paper>
 </DialogContent>

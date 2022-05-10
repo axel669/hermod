@@ -1,25 +1,96 @@
 console.log("Command worker running o7")
 
-function textVariables(text, parts, tags) {
-    return text.replace(
-        /\$\{(\d)\}/g,
-        (matched, n) => {
-            const index = parseInt(n)
-            if (isNaN(n)) {
-                return matched
+const cmd = {
+    inc(name, value) {
+        if (value === undefined) {
+            return 1
+        }
+        return value + 1
+    },
+    dec(name, value) {
+        if (value === undefined) {
+            return -1
+        }
+        return value - 1
+    },
+    reset(name) {
+        return 0
+    },
+    set(name, value) {
+        return value
+    }
+}
+function variableValue(name, {parts, tags, vars}) {
+    if (name === "user") {
+        return tags.displayName
+    }
+    if (name === "message") {
+        return parts.join(" ")
+    }
+    if (/^\d+$/.test(name) === true) {
+        return parts[parseInt(name) - 1] ?? ""
+    }
+    if (name.startsWith("$") === true) {
+        return vars[variableValue(name.slice(1), info)] ?? 0
+    }
+    return vars[name] ?? 0
+}
+function textVariables(text, parts, tags, vars) {
+    const changedVars = {}
+    const info = { parts, tags, vars }
+    const chat = text.replace(
+        /\$\{(.+?)\}/g,
+        function(_, input) {
+            if (input === "user" || input === "message") {
+                return variableValue(input, info)
             }
-            return parts[index - 1]
+
+            const [command, variable] = input.split(/\s+/)
+            // if (/^\d+$/.test(command) === true) {
+            //     return parts[parseInt(command) - 1]
+            // }
+            if (variable === undefined) {
+                variableValue(command, info)
+            }
+
+            changedVars[name] = cmd[command](
+                variable,
+                variableValue(name, info)
+            )
+            return changedVars[variable]
         }
     )
-    .replace(/\$\{user\}/g, tags.displayName)
-    .replace(/\$\{message\}/g, parts.join(" "))
+
+    return {chat, vars: changedVars}
+
+    // return text.replace(
+    //     /\$\{(\d)\}/g,
+    //     (matched, n) => {
+    //         const index = parseInt(n)
+    //         if (isNaN(n)) {
+    //             return matched
+    //         }
+    //         return parts[index - 1]
+    //     }
+    // )
+    // .replace(/\$\{user\}/g, tags.displayName)
+    // .replace(/\$\{message\}/g, parts.join(" "))
+    // .replace(
+    //     /\$\{\s*(#[\w\d]+)?\s*(\w[\w\d]+)\s*\}/g,
+    //     (matched, command, name) => {
+    //         if (command === undefined) {
+    //             return vars[name] ?? 0
+    //         }
+    //         return vars[name]
+    //     }
+    // )
 }
 const pluginMap = {
     "text": {
         chat: async (args) => {
-            const { parts, tags, config } = args
+            const { parts, tags, config, vars } = args
             return {
-                chat: textVariables(config.text, parts, tags),
+                ...textVariables(config.text, parts, tags, vars),
                 reply: config.reply,
             }
         },
@@ -30,12 +101,18 @@ const pluginMap = {
                 chat: config.text
             }
         },
+        redeem: async (args) => {
+            const { redemption, config } = args
+            return {
+                speak: redemption.user_input
+            }
+        },
     },
     "speech": {
         chat: async (args) => {
             const { parts, tags, config } = args
             return {
-                speak: textVariables(config.text, parts, tags)
+                speak: textVariables(config.text, parts, tags).chat
             }
         },
         redeem: async (args) => {
@@ -73,6 +150,7 @@ const commands = {
             throw new Error("plugin not found")
         }
 
+        console.log(executionInfo)
         return await pluginMap[pluginID][type](args)
     },
     unload: async (args) => {

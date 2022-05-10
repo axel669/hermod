@@ -9,7 +9,7 @@
         TitleBar,
     } from "svelte-doric"
     import { DialogContent } from "svelte-doric/dialog"
-    import { Action, Flex, Grid } from "svelte-doric/layout"
+    import { Flex, Grid } from "svelte-doric/layout"
 
     import {writable, get} from "svelte/store"
 
@@ -56,36 +56,34 @@ width="max(45vw, 320px)"
 height="60vh"
 >
     <Paper card>
-        <TitleBar compact>
+        <TitleBar compact slot="title">
             New Text Command
         </TitleBar>
-        <Action>
-            <Flex direction="column">
-                <TextInput label="Command" bind:value={name}>
-                    <Adornment slot="start">
-                        <Text adorn>!</Text>
-                    </Adornment>
-                </TextInput>
+        <Flex direction="column">
+            <TextInput label="Command" bind:value={name}>
+                <Adornment slot="start">
+                    <Text adorn>!</Text>
+                </Adornment>
+            </TextInput>
 
-                <Select label="Plugin" bind:value={plugin} {options} />
+            <Select label="Plugin" bind:value={plugin} {options} />
 
-                <SettingsEditor
-                    type="chat"
-                    bind:config
-                    bind:userLevel
-                    bind:enabled
-                    bind:cooldown
-                    settings={plugin.settings}
-                />
-            </Flex>
-            <Grid cols={2}>
-                <Button color="danger" on:tap={cancel}>
-                    Cancel
-                </Button>
-                <Button color="secondary" on:tap={create}>
-                    Create
-                </Button>
-            </Grid>
-        </Action>
+            <SettingsEditor
+                type="chat"
+                bind:config
+                bind:userLevel
+                bind:enabled
+                bind:cooldown
+                settings={plugin.settings}
+            />
+        </Flex>
+        <Grid cols={2} slot="action">
+            <Button color="danger" on:tap={cancel}>
+                Cancel
+            </Button>
+            <Button color="secondary" on:tap={create}>
+                Create
+            </Button>
+        </Grid>
     </Paper>
 </DialogContent>

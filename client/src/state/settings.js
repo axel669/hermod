@@ -7,18 +7,6 @@ import api from "@/comm/api"
 
 import builtInPlugins from "./settings/builtin-plugins"
 
-function debounce(time, func) {
-    let id = null
-    return function(...args) {
-        clearTimeout(id)
-        id = setTimeout(
-            () => func(...args),
-            time
-        )
-    }
-}
-
-const saveSettings = debounce(5000, api.saveSettings)
 const settings = readable(
     null,
     (set) => {
@@ -30,7 +18,7 @@ const settings = readable(
                     get(settings),
                     evt.data
                 )
-                saveSettings(next)
+                api.saveSettings(next)
                 set(next)
             }
         )
