@@ -23,10 +23,6 @@ const login = async () => {
     await api.login(accessToken)
 }
 
-const defaultSettings = JSON.stringify({
-    plugins: {},
-    commands: {},
-})
 const user = writable(
     null,
     async (set) => {
@@ -49,14 +45,14 @@ const user = writable(
 
         user.profileImage = twitchUserInfo.profile_image_url
 
-        // const settings = JSON.parse(
-        //     localStorage.settings ?? defaultSettings
-        // )
         const settings = await api.readSettings()
         for (const plugin of Object.values(settings.plugins)) {
             worker.importPlugin(plugin)
         }
         bridge.emit("settings.load", settings)
+
+        const vars = await api.readVars()
+        bridge.emit("vars.load", vars)
         set(user)
     }
 )

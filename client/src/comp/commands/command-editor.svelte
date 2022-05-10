@@ -11,7 +11,7 @@
         TitleBar,
     } from "svelte-doric"
     import { DialogContent, Dialog, Confirm } from "svelte-doric/dialog"
-    import { Action, Flex, Grid } from "svelte-doric/layout"
+    import { Flex, Grid } from "svelte-doric/layout"
 
     import SettingsEditor from "./settings-editor.svelte"
 
@@ -57,7 +57,7 @@ width="max(45vw, 320px)"
 height="60vh"
 >
     <Paper card>
-        <TitleBar compact>
+        <TitleBar compact slot="title">
             Edit: {command.name} ({command.type} command)
 
             <Adornment slot="action">
@@ -66,27 +66,25 @@ height="60vh"
                 </Button>
             </Adornment>
         </TitleBar>
-        <Action>
-            <Flex direction="column">
-                <SettingsEditor
-                    {type}
-                    bind:config
-                    bind:enabled
-                    bind:userLevel
-                    bind:freq
-                    bind:redeem
-                    bind:cooldown
-                    settings={plugin.settings}
-                />
-            </Flex>
-            <Grid cols={2}>
-                <Button color="danger" on:tap={cancel}>
-                    Cancel
-                </Button>
-                <Button color="secondary" on:tap={save}>
-                    Save
-                </Button>
-            </Grid>
-        </Action>
+        <Flex direction="column">
+            <SettingsEditor
+                {type}
+                bind:config
+                bind:enabled
+                bind:userLevel
+                bind:freq
+                bind:redeem
+                bind:cooldown
+                settings={plugin.settings}
+            />
+        </Flex>
+        <Grid cols={2} slot="action">
+            <Button color="danger" on:tap={cancel}>
+                Cancel
+            </Button>
+            <Button color="secondary" on:tap={save}>
+                Save
+            </Button>
+        </Grid>
     </Paper>
 </DialogContent>

@@ -9,7 +9,7 @@
         TitleBar,
     } from "svelte-doric"
     import { DialogContent } from "svelte-doric/dialog"
-    import { Action, Flex, Grid } from "svelte-doric/layout"
+    import { Flex, Grid } from "svelte-doric/layout"
 
     import {writable, get} from "svelte/store"
 
@@ -20,10 +20,10 @@
     export let close
 
     const plugins = $pluginList.filter(
-        p => p.triggers.includes("timer")
+        p => p.triggers.includes("redeem")
     )
     let name = ""
-    let freq = 60
+    let redeem = ""
     let plugin = plugins[0]
     let config = {}
     let userLevel = "anyone"
@@ -42,7 +42,7 @@
         config,
         userLevel,
         enabled,
-        freq,
+        redeem,
         pluginID: plugin.id,
     })
 </script>
@@ -55,32 +55,30 @@ width="max(45vw, 320px)"
 height="60vh"
 >
     <Paper card>
-        <TitleBar compact>
-            New Timer Command
+        <TitleBar compact slot="title">
+            New Channel Point Redeem Command
         </TitleBar>
-        <Action>
-            <Flex direction="column">
-                <TextInput label="Command" bind:value={name} />
+        <Flex direction="column">
+            <TextInput label="Command" bind:value={name} />
 
-                <Select label="Plugin" bind:value={plugin} {options} />
+            <Select label="Plugin" bind:value={plugin} {options} />
 
-                <SettingsEditor
-                    type="timer"
-                    bind:config
-                    bind:userLevel
-                    bind:enabled
-                    bind:freq
-                    settings={plugin.settings}
-                />
-            </Flex>
-            <Grid cols={2}>
-                <Button color="danger" on:tap={cancel}>
-                    Cancel
-                </Button>
-                <Button color="secondary" on:tap={create} disabled={freq < 15}>
-                    Create
-                </Button>
-            </Grid>
-        </Action>
+            <SettingsEditor
+                type="redeem"
+                bind:config
+                bind:userLevel
+                bind:enabled
+                bind:redeem
+                settings={plugin.settings}
+            />
+        </Flex>
+        <Grid cols={2} slot="action">
+            <Button color="danger" on:tap={cancel}>
+                Cancel
+            </Button>
+            <Button color="secondary" on:tap={create}>
+                Create
+            </Button>
+        </Grid>
     </Paper>
 </DialogContent>

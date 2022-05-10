@@ -32,9 +32,18 @@ async function saveSettings(settings) {
     return await postJSON("/settings", settings)
 }
 
+async function readVars() {
+    return await get("/variables")
+}
+async function saveVars(vars) {
+    return await postJSON("/variables", vars)
+}
+
 export default {
     login,
     currentUser,
     readSettings,
     saveSettings,
+    readVars,
+    saveVars,
 }

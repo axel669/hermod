@@ -1,8 +1,10 @@
 import { writable, get } from "svelte/store"
 
 import { commands, commandList } from "@/state/settings"
+import vars from "@/state/variables"
 import worker from "@/comm/worker"
 import bridge from "@/comm/bridge"
+import gspeech from "@/comm/gtts"
 
 let comms = null
 const connected = writable({
@@ -24,11 +26,12 @@ const chat = async (result, replyID) => {
     const reply = result.reply ? replyID : undefined
     say(result.chat, reply)
 }
-const speak = (result, voice = "UK English Male") => {
+const speak = (result) => {
     if (result.speak === undefined) {
         return
     }
-    responsiveVoice.speak(result.speak, voice)
+    gspeech(result.speak)
+    // responsiveVoice.speak(result.speak, voice)
 }
 
 bridge.on(
@@ -122,6 +125,7 @@ const join = (user, joinMessage) => {
             }
 
             lastInvoke[command.id] = now
+            console.log(get(vars))
             const executionInfo = {
                 pluginID: command.pluginID,
                 type: "chat",
@@ -130,11 +134,16 @@ const join = (user, joinMessage) => {
                     parts,
                     tags,
                     config: command.config,
+                    vars: get(vars)
                 }
             }
 
             const result = await worker.sendCommand(executionInfo)
 
+            bridge.emit(
+                "vars.change",
+                result.vars ?? {}
+            )
             speak(result)
             chat(result, tags.id)
         }

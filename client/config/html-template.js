@@ -7,7 +7,6 @@ const template = (options) => `<!doctype html>
         <link rel="icon" type="image/png" href="https://axel669.net/images/megaman-rounded.png" />
 
         <script src="https://cdn.jsdelivr.net/npm/@axel669/twitch@1.0.5/dist/twitch.js"></script>
-        <script src="https://code.responsivevoice.org/responsivevoice.js?key=TQIEjrYE"></script>
     </head>
 
     <body>
