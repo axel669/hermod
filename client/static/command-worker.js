@@ -46,44 +46,19 @@ function textVariables(text, parts, tags, vars) {
             }
 
             const [command, variable] = input.split(/\s+/)
-            // if (/^\d+$/.test(command) === true) {
-            //     return parts[parseInt(command) - 1]
-            // }
             if (variable === undefined) {
-                variableValue(command, info)
+                return variableValue(command, info)
             }
 
-            changedVars[name] = cmd[command](
+            changedVars[variable] = cmd[command](
                 variable,
-                variableValue(name, info)
+                variableValue(variable, info)
             )
             return changedVars[variable]
         }
     )
 
     return {chat, vars: changedVars}
-
-    // return text.replace(
-    //     /\$\{(\d)\}/g,
-    //     (matched, n) => {
-    //         const index = parseInt(n)
-    //         if (isNaN(n)) {
-    //             return matched
-    //         }
-    //         return parts[index - 1]
-    //     }
-    // )
-    // .replace(/\$\{user\}/g, tags.displayName)
-    // .replace(/\$\{message\}/g, parts.join(" "))
-    // .replace(
-    //     /\$\{\s*(#[\w\d]+)?\s*(\w[\w\d]+)\s*\}/g,
-    //     (matched, command, name) => {
-    //         if (command === undefined) {
-    //             return vars[name] ?? 0
-    //         }
-    //         return vars[name]
-    //     }
-    // )
 }
 const pluginMap = {
     "text": {
