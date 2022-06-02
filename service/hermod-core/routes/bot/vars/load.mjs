@@ -7,12 +7,12 @@ export default {
         const redis = await redisConnector()
         const key = `${user.userID}.bot.vars`
 
-        const vars = await redis.get(key)
+        const vars = await redis.json.get(key, ".")
 
         if (vars === null) {
             return {}
         }
 
-        return JSON.parse(vars)
+        return vars
     }
 }

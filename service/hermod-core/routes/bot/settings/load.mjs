@@ -14,12 +14,12 @@ export default {
         const redis = await redisConnector()
         const key = `${user.userID}.bot.settings`
 
-        const settings = await redis.get(key)
+        const settings = await redis.json.get(key, ".")
 
         if (settings === null) {
             return defaultSettings
         }
 
-        return JSON.parse(settings)
+        return settings
     }
 }

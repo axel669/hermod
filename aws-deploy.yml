@@ -5,6 +5,11 @@ prodTag: "live"
 functions:
   core:
     dir: service/hermod-core
+  rtc-send:
+    dir: service/rtc-send
+  rtc-overlay-load:
+    dir: service/hermod_rtc-overlay-settings
 
 deployment:
   - "func:core"
+  - "func:rtc-send"

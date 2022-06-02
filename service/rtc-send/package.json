@@ -1,5 +1,5 @@
 {
-  "name": "hermod-core",
+  "name": "service",
   "version": "1.0.0",
   "description": "",
   "main": "index.mjs",
@@ -8,10 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "MIT",
+  "license": "ISC",
   "dependencies": {
-    "axel-query": "^0.4.0",
-    "pusher": "^5.1.0-beta",
-    "uuid": "^8.3.2"
+    "pusher": "^5.1.0-beta"
   }
 }

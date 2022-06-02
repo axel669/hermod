@@ -9,10 +9,7 @@ export default {
         const redis = await redisConnector()
         const key = `${user.userID}.bot.vars`
 
-        await redis.set(
-            key,
-            JSON.stringify(args.vars)
-        )
+        await redis.json.set(key, ".", args.vars)
 
         return true
     }

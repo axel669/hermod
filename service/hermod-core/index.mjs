@@ -19,6 +19,7 @@ export async function handler(event) {
         {
             redisConnector,
             user,
+            stage: event.stageVariables
         }
     )
 }
