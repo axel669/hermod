@@ -1,0 +1,15 @@
+{
+  "name": "hermod-core",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.mjs",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "axel-query": "^0.4.0"
+  }
+}

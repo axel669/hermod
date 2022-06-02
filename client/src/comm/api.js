@@ -9,6 +9,23 @@ function postJSON(route, data, options) {
     return http.postJSON(`${apiURL}${route}`, data, options)
 }
 
+async function query(queries) {
+    const response = await postJSON("/core", queries)
+
+    return Object.fromEntries(
+        Object.entries(response).map(
+            function([key, item]) {
+                if(item.error !== undefined) {
+                    return [key, new Error(item.error)]
+                }
+                return [key, item.value]
+            }
+        )
+    )
+}
+
+window.query = query
+
 async function login(key) {
     const result = await postJSON(
         "/login",
@@ -46,4 +63,5 @@ export default {
     saveSettings,
     readVars,
     saveVars,
+    query,
 }

@@ -17,7 +17,12 @@ const vars = readable(
                     ...get(vars),
                     ...evt.data,
                 }
-                api.saveVars(next)
+                // api.saveVars(next)
+                api.query({
+                    "success:bot.vars.update": {
+                        vars: next
+                    }
+                })
                 set(next)
             }
         )

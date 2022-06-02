@@ -28,30 +28,37 @@ const user = writable(
     async (set) => {
         await login()
 
-        const user = await api.currentUser()
-        if (Err(user)) {
+        function fail() {
             set(false)
             bridge.emit("settings.load", {})
-            return
+        }
+
+        const user = await api.currentUser()
+        if (Err(user)) {
+            return fail()
         }
 
         twitch.init(user)
         const twitchUserInfo = await twitch.userInfo(user.userID)
         if (Err(twitchUserInfo)) {
-            set(false)
-            bridge.emit("settings.load", {})
-            return
+            return fail()
         }
 
         user.profileImage = twitchUserInfo.profile_image_url
 
-        const settings = await api.readSettings()
+        const { settings, vars } = await api.query({
+            "settings:bot.settings.load": {},
+            "vars:bot.vars.load": {}
+        })
+
+        if(Err(settings) || Err(vars)) {
+            return fail()
+        }
+
         for (const plugin of Object.values(settings.plugins)) {
             worker.importPlugin(plugin)
         }
         bridge.emit("settings.load", settings)
-
-        const vars = await api.readVars()
         bridge.emit("vars.load", vars)
         set(user)
     }

@@ -18,7 +18,12 @@ const settings = readable(
                     get(settings),
                     evt.data
                 )
-                api.saveSettings(next)
+                // api.saveSettings(next)
+                api.query({
+                    "success:bot.settings.update": {
+                        settings: next
+                    }
+                })
                 set(next)
             }
         )

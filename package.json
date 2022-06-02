@@ -8,7 +8,8 @@
     "deploy:hermod-vars-read": "node deploy/lambda.mjs service/hermod_vars-read/",
     "deploy:hermod-vars-save": "node deploy/lambda.mjs service/hermod_vars-save/",
     "deploy:hermod-save": "node deploy/lambda.mjs service/hermod_save/",
-    "deploy:hermod-read": "node deploy/lambda.mjs service/hermod_read/"
+    "deploy:hermod-read": "node deploy/lambda.mjs service/hermod_read/",
+    "deploy:service": "aws-deploy func:core"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,7 @@
   "homepage": "https://github.com/axel669/hermod#readme",
   "dependencies": {
     "@aws-sdk/client-lambda": "^3.58.0",
+    "@axel669/aws-deploy": "^0.1.0",
     "adm-zip": "^0.5.9"
   }
 }

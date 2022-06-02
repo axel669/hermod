@@ -1,0 +1,10 @@
+region: us-west-1
+profile: default
+prodTag: "live"
+
+functions:
+  core:
+    dir: service/hermod-core
+
+deployment:
+  - "func:core"
