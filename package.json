@@ -5,10 +5,6 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "deploy:hermod-vars-read": "node deploy/lambda.mjs service/hermod_vars-read/",
-    "deploy:hermod-vars-save": "node deploy/lambda.mjs service/hermod_vars-save/",
-    "deploy:hermod-save": "node deploy/lambda.mjs service/hermod_save/",
-    "deploy:hermod-read": "node deploy/lambda.mjs service/hermod_read/",
     "deploy:service": "aws-deploy func:core",
     "deploy:rtc-overlay": "aws-deploy func:rtc-overlay-load",
     "deploy:rtc-send": "aws-deploy func:rtc-send"
